@@ -1,0 +1,67 @@
+import SwiftUI
+
+struct HabitEdit: View {
+	@Bindable var habit: Habit
+
+	@FocusState private var focusedField: FocusedField?
+
+	private enum FocusedField {
+		case title, goalCount, notifyAt
+	}
+
+	var body: some View {
+		Form {
+			Section {
+				HStack {
+					Text("Name")
+					TextField("Name", text: $habit.title)
+						.focused($focusedField, equals: .title)
+						.textInputAutocapitalization(.words)
+				}
+					.onTapGesture { focusedField = .title }
+				Picker("Interval", selection: $habit.interval) {
+					ForEach(HabitInterval.allCases, id: \.self) { interval in
+						Text(interval.description)
+					}
+				}
+				HStack {
+					Text("Goal Count")
+					TextField("Goal Count", value: $habit.goalCount, format: .number)
+						.focused($focusedField, equals: .goalCount)
+						.keyboardType(.decimalPad)
+				}
+					.onTapGesture { focusedField = .goalCount }
+			}
+			Section {
+				Toggle("Reminder", isOn: $habit.notifyEnabled)
+				if (habit.notifyEnabled) {
+					DatePicker("Reminder At", selection: $habit.notifyAt, displayedComponents: .hourAndMinute)
+						.focused($focusedField, equals: .notifyAt)
+				}
+			}
+		}
+			.defaultFocus($focusedField, .title, priority: .userInitiated)
+			.multilineTextAlignment(.trailing)
+			.onChange(of: habit.notifyEnabled) { oldValue, notifyEnabled in
+				if notifyEnabled {
+					Task { @MainActor in
+						focusedField = .notifyAt
+					}
+				}
+			}
+			.onChange(of: focusedField) { oldValue, focusedField in
+				if focusedField != nil {
+					Task { @MainActor in
+#if os(iOS)
+						UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+#endif
+					}
+				}
+			}
+	}
+}
+
+#Preview {
+	HabitEdit(habit: PreviewModel.preview.habit)
+		.modelContainer(PreviewModel.preview.container)
+}
