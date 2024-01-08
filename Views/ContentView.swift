@@ -12,16 +12,37 @@ struct ContentView: View {
 		NavigationSplitView {
 			List {
 				ForEach(habits) { habit in
-					NavigationLink(value: habit) {
-						if habit.title.isEmpty {
-							Text("Unlabeled")
-								.foregroundStyle(.secondary)
-						} else {
-							Text(habit.title)
+					Button {
+						//TODO
+					} label: {
+						HStack {
+							Label {
+								if habit.title.isEmpty {
+									Text("Unlabeled")
+										.foregroundStyle(.secondary)
+								} else {
+									Text(habit.title)
+								}
+							} icon: {
+								Image(systemName: !habit.icon.isEmpty ? habit.icon : "diamond")
+									.foregroundStyle(Color(cgColor: habit.color))
+							}
+							Spacer()
+							ProgressCircle(habit: habit, size: 24)
+								.fixedSize(horizontal: true, vertical: false)
 						}
 					}
+						.tint(Color(cgColor: habit.color))
+						.swipeActions(edge: .trailing) {
+							NavigationLink(value: habit) {
+								Text("Edit")
+							}
+								.tint(.accentColor)
+							Button("Delete", role: .destructive) {
+								modelContext.delete(habit)
+							}
+						}
 				}
-					.onDelete(perform: deleteItems)
 			}
 				.navigationDestination(for: Habit.self) { habit in
 					HabitEdit(habit: habit)
@@ -41,28 +62,20 @@ struct ContentView: View {
 				}
 				.alert("Name this Habit", isPresented: $newHabitPrompt) {
 					TextField("Name this habit", text: $newHabitName)
+#if !os(macOS)
 						.textInputAutocapitalization(.words)
+#endif
 						.submitLabel(.done)
-					Button("Create", action: addItem)
+					Button("Create") {
+						withAnimation {
+							let newItem = Habit(title: newHabitName)
+							modelContext.insert(newItem)
+						}
+					}
 					Button("Cancel", role: .cancel) { }
 				}
 		} detail: {
 			Text("Select an item")
-		}
-	}
-
-	private func addItem() {
-		withAnimation {
-			let newItem = Habit(title: newHabitName)
-			modelContext.insert(newItem)
-		}
-	}
-
-	private func deleteItems(offsets: IndexSet) {
-		withAnimation {
-			for index in offsets {
-				modelContext.delete(habits[index])
-			}
 		}
 	}
 }

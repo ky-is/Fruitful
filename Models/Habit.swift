@@ -1,5 +1,5 @@
-import Foundation
 import SwiftData
+import SwiftUI
 
 enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 	case day, week, month, year
@@ -14,6 +14,18 @@ enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 	}
 }
 
+extension CGColor {
+	var hexColor: UInt {
+		let r = components?[0] ?? 0
+		let g = components?[1] ?? 0
+		let b = components?[2] ?? 0
+		let red = UInt(r * 255) << 16
+		let green = UInt(g * 255) << 08
+		let blue = UInt(b * 255)
+		return red | green | blue
+	}
+}
+
 @Model
 final class Habit {
 	var title: String
@@ -22,6 +34,16 @@ final class Habit {
 	var interval: HabitInterval
 	var goalLabel: String
 	var goalCount: Int
+
+	var hexColor: UInt
+	var color: CGColor {
+		get {
+			CGColor(srgbRed: Double((hexColor >> 16) & 0xff) / 255, green: Double((hexColor >> 08) & 0xff) / 255, blue: Double((hexColor >> 00) & 0xff) / 255, alpha: 1)
+		}
+		set {
+			hexColor = newValue.hexColor
+		}
+	}
 
 	var completedAt: Date?
 	var completedCount: Int
@@ -37,6 +59,7 @@ final class Habit {
 		self.interval = .day
 		self.goalLabel = ""
 		self.goalCount = 1
+		self.hexColor = .random(in: 99999...999999999)
 
 		self.completedAt = nil
 		self.completedCount = 0

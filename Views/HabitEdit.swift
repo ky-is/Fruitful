@@ -3,6 +3,7 @@ import SwiftUI
 struct HabitEdit: View {
 	@Bindable var habit: Habit
 
+	@Environment(\.self) private var environment
 	@FocusState private var focusedField: FocusedField?
 
 	private enum FocusedField {
@@ -10,27 +11,51 @@ struct HabitEdit: View {
 	}
 
 	var body: some View {
+		let tintColor = Color(cgColor: habit.color)
 		Form {
 			Section {
-				HStack {
-					Text("Name")
-					TextField("Name", text: $habit.title)
-						.focused($focusedField, equals: .title)
-						.textInputAutocapitalization(.words)
-				}
-					.onTapGesture { focusedField = .title }
 				Picker("Interval", selection: $habit.interval) {
 					ForEach(HabitInterval.allCases, id: \.self) { interval in
 						Text(interval.description)
 					}
 				}
+					.tint(Color(cgColor: habit.color))
 				HStack {
 					Text("Goal Count")
 					TextField("Goal Count", value: $habit.goalCount, format: .number)
 						.focused($focusedField, equals: .goalCount)
+#if !os(macOS)
 						.keyboardType(.decimalPad)
+#endif
 				}
 					.onTapGesture { focusedField = .goalCount }
+			} header: {
+				HStack {
+					Label {
+						TextField("Name", text: $habit.title)
+							.focused($focusedField, equals: .title)
+#if !os(macOS)
+							.textInputAutocapitalization(.words)
+							.foregroundStyle(Color(uiColor: .label))
+#endif
+					} icon: {
+						Button {
+							//TODO
+						} label: {
+							let hasIcon = !habit.icon.isEmpty
+							Image(systemName: hasIcon ? habit.icon : "questionmark.diamond.fill")
+								.tint(hasIcon ? nil : tintColor.opacity(0.5))
+						}
+							.buttonStyle(.plain)
+					}
+					ColorPicker("Habit Color", selection: $habit.color, supportsOpacity: false)
+						.labelsHidden()
+				}
+					.font(.title2)
+					.textCase(nil)
+					.tint(tintColor)
+					.padding(.bottom)
+					.padding(.leading, -16)
 			}
 			Section {
 				Toggle("Reminder", isOn: $habit.notifyEnabled)
@@ -40,6 +65,7 @@ struct HabitEdit: View {
 				}
 			}
 		}
+			.tint(tintColor)
 			.defaultFocus($focusedField, .title, priority: .userInitiated)
 			.multilineTextAlignment(.trailing)
 			.onChange(of: habit.notifyEnabled) { oldValue, notifyEnabled in
@@ -62,6 +88,8 @@ struct HabitEdit: View {
 }
 
 #Preview {
-	HabitEdit(habit: PreviewModel.preview.habit)
+	NavigationStack {
+		HabitEdit(habit: PreviewModel.preview.habit)
+	}
 		.modelContainer(PreviewModel.preview.container)
 }
