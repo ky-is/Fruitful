@@ -52,19 +52,18 @@ final class Habit {
 	var notifyEnabled: Bool
 	var notifyAt: Date
 
-	init(title: String) {
+	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, completedAt: Date? = nil) {
+		let date = Date()
 		self.title = title
-		self.createdAt = Date()
-		self.icon = ""
-		self.interval = .day
-		self.goalLabel = ""
-		self.goalCount = 1
-		self.hexColor = .random(in: 99999...999999999)
-
-		self.completedAt = nil
+		self.createdAt = date
+		self.icon = icon
+		self.interval = interval
+		self.goalLabel = goalLabel
+		self.goalCount = goalCount
+		self.hexColor = hexColor ?? .random(in: 99999...999999999)
+		self.completedAt = completedAt
 		self.completedCount = 0
 		self.completedStreak = 0
-
 		self.notifyEnabled = false
 		self.notifyAt = Date.distantPast
 	}
