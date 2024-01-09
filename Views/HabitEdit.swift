@@ -4,10 +4,62 @@ struct HabitEdit: View {
 	@Bindable var habit: Habit
 
 	@Environment(\.self) private var environment
+	@Environment(\.modelContext) private var modelContext
+
 	@FocusState private var focusedField: FocusedField?
+
+	@State private var updateEntry: HabitEntry?
+	@State private var updateEntryCount = 0
 
 	private enum FocusedField {
 		case title, goalCount, notifyAt
+	}
+
+	var entriesSection: some View {
+		let showsPrompt = Binding {
+			return updateEntry != nil
+		} set: { _,_ in
+			updateEntry = nil
+		}
+		return Section {
+			ForEach(habit.entries) { entry in
+				let isActiveEntry = entry == habit.activeEntry
+				HStack {
+					Text(entry.count, format: .number)
+					Text(entry.endsAt, format: .dateTime)
+				}
+					.fontWeight(isActiveEntry ? .bold : .regular)
+					.onTapGesture {
+						updateEntryCount = entry.count
+						updateEntry = entry
+					}
+					.swipeActions(edge: .trailing) {
+						if !isActiveEntry {
+							Button("Delete", role: .destructive) {
+								modelContext.delete(entry)
+							}
+						}
+					}
+			}
+		}
+			.alert("Update count", isPresented: showsPrompt) {
+				TextField("Entry count", value: $updateEntryCount, format: .number)
+	#if !os(macOS)
+					.keyboardType(.numberPad)
+	#endif
+					.submitLabel(.done)
+				Button("Update") {
+					withAnimation {
+						if let updateEntry {
+							updateEntry.count = updateEntryCount
+							if updateEntry.habit.completedFor == updateEntry.endsAt && updateEntry.count < updateEntry.habit.goalCount {
+								updateEntry.habit.completedFor = Date.distantPast
+							}
+						}
+					}
+				}
+				Button("Cancel", role: .cancel) { }
+			}
 	}
 
 	var body: some View {
@@ -16,7 +68,7 @@ struct HabitEdit: View {
 			Section {
 				Picker("Interval", selection: $habit.interval) {
 					ForEach(HabitInterval.allCases, id: \.self) { interval in
-						Text(interval.description)
+						Text(interval.description.capitalized)
 					}
 				}
 					.tint(Color(cgColor: habit.color))
@@ -64,6 +116,7 @@ struct HabitEdit: View {
 						.focused($focusedField, equals: .notifyAt)
 				}
 			}
+			entriesSection
 		}
 			.tint(tintColor)
 			.defaultFocus($focusedField, .title, priority: .userInitiated)

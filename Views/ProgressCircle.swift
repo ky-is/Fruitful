@@ -7,7 +7,7 @@ struct ProgressCircle: View {
 	var body: some View {
 		let color = Color(cgColor: habit.color)
 		let lineWidth = size / 6
-		let progress = 0 / Double(habit.goalCount)
+		let progress = Double(habit.activeEntry?.count ?? 0) / Double(habit.goalCount)
 		ZStack {
 			Circle()
 				.stroke(color.tertiary, lineWidth: lineWidth)

@@ -10,6 +10,7 @@ struct AppModel {
 	static func getSchema() -> Schema {
 		Schema([
 			Habit.self,
+			HabitEntry.self,
 		])
 	}
 
@@ -32,6 +33,7 @@ struct AppModel {
 			let habits = try context.fetch(FetchDescriptor<Habit>())
 			if habits.isEmpty {
 				seedHabits.forEach(context.insert)
+				print("RELOAD seed data")
 			} else {
 				print(habits.map { "\($0.title) \($0.hexColor)" }) //SAMPLE
 			}

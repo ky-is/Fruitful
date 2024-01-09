@@ -6,10 +6,10 @@ enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 
 	var description: String {
 		switch self {
-		case .day: "Daily"
-		case .week: "Weekly"
-		case .month: "Monthly"
-		case .year: "Yearly"
+		case .day: "daily"
+		case .week: "weekly"
+		case .month: "monthly"
+		case .year: "yearly"
 		}
 	}
 }
@@ -28,7 +28,7 @@ extension CGColor {
 
 @Model
 final class Habit {
-	var title: String
+	@Attribute(.unique) var title: String
 	var createdAt: Date
 	var icon: String
 	var interval: HabitInterval
@@ -45,12 +45,17 @@ final class Habit {
 		}
 	}
 
+	var completedFor: Date
 	var completedAt: Date?
 	var completedCount: Int
 	var completedStreak: Int
 
 	var notifyEnabled: Bool
 	var notifyAt: Date
+
+	@Relationship(deleteRule: .cascade, inverse: \HabitEntry.habit)
+	var entries: [HabitEntry] = []
+	var activeEntry: HabitEntry?
 
 	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, completedAt: Date? = nil) {
 		let date = Date()
@@ -61,10 +66,12 @@ final class Habit {
 		self.goalLabel = goalLabel
 		self.goalCount = goalCount
 		self.hexColor = hexColor ?? .random(in: 99999...999999999)
+		self.completedFor = Date()
 		self.completedAt = completedAt
 		self.completedCount = 0
 		self.completedStreak = 0
 		self.notifyEnabled = false
 		self.notifyAt = Date.distantPast
+		self.activeEntry = HabitEntry(habit: self)
 	}
 }
