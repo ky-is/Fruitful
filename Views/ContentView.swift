@@ -13,9 +13,7 @@ struct ContentView: View {
 
 	init() {
 		let now = Date()
-		_activeHabitEntries = Query(filter: #Predicate { habitEntry in
-			habitEntry.endsAt > now
-		})
+		_activeHabitEntries = Query(filter: #Predicate { $0.endsAt > now })
 	}
 
 	private func updateActiveHabitEntries() {
@@ -35,40 +33,65 @@ struct ContentView: View {
 		}
 	}
 
-	var body: some View {
-		let groupedHabits = Dictionary(grouping: habits) { habit in
-			habit.activeEntry == nil || habit.completedFor < habit.activeEntry!.endsAt ? "In Progress" : "Completed"
+	private var groupedHabits: [(label: String, values: [Habit])] {
+		let now = Date()
+		let timeRemainingForUpNow: TimeInterval = 24 * 60 * 60 //TODO dynamic
+		let groupKeys = ["Up Now", "Upcoming", "Completed"]
+		let groupedHabits = Dictionary(grouping: habits, by: { habit in
+			if habit.activeEntry != nil {
+				let endsAt = habit.activeEntry!.endsAt
+				if habit.completedFor >= endsAt {
+					return groupKeys[2]
+				}
+				let timeLeft = endsAt.timeIntervalSince(now)
+				if timeLeft < timeRemainingForUpNow {
+					return groupKeys[0]
+				}
+			}
+			return groupKeys[1]
+		})
+		return groupKeys.compactMap {
+			guard let values = groupedHabits[$0] else { return nil }
+			return (label: $0, values: values)
 		}
-		let a = groupedHabits.sorted { $0.key > $1.key }
+	}
+
+	private func onHabit(habit: Habit) {
+		if let activeEntry = habit.activeEntry {
+			withAnimation {
+				activeEntry.count += 1
+				if activeEntry.count >= habit.goalCount && habit.completedFor < activeEntry.endsAt {
+					habit.completedFor = activeEntry.endsAt
+					habit.completedAt = Date()
+					habit.completedCount += 1
+					habit.completedStreak += 1 //TODO
+				}
+			}
+		} else {
+			print("ERR no active entry for", habit.title)
+		}
+	}
+
+	var body: some View {
 		NavigationSplitView {
 			List {
-				ForEach(a, id: \.key) { groupLabel, habits in
+				ForEach(groupedHabits, id: \.label) { groupLabel, habits in
 					Section {
 						ForEach(habits) { habit in
 							Button {
-								if let activeEntry = habit.activeEntry {
-									withAnimation {
-										activeEntry.count += 1
-										if activeEntry.count >= habit.goalCount && habit.completedFor < activeEntry.endsAt {
-											habit.completedFor = activeEntry.endsAt
-											habit.completedAt = Date()
-											habit.completedCount += 1
-											habit.completedStreak += 1 //TODO
-										}
-									}
-								} else {
-									print("ERR no active entry for", habit.title)
-								}
+								onHabit(habit: habit)
 							} label: {
 								HabitListItem(habit: habit)
 							}
-								.frame(minHeight: 64)
+								.buttonStyle(.plain)
+								.listRowSeparator(.hidden)
+								.frame(minHeight: 56)
 								.tint(Color(cgColor: habit.color))
 								.swipeActions(edge: .trailing) {
 									NavigationLink(value: habit) {
 										Text("Edit")
 									}
-									.tint(.accentColor)
+										.tint(.accentColor)
 									Button("Delete", role: .destructive) {
 										modelContext.delete(habit)
 									}
@@ -82,7 +105,9 @@ struct ContentView: View {
 				}
 			}
 				.navigationTitle("My Habits")
-//				.listStyle(.grouped)
+#if os(macOS)
+				.listStyle(.plain)
+#endif
 				.onChange(of: scenePhase, { oldPhase, newPhase in
 					if newPhase == .active {
 						updateActiveHabitEntries()
@@ -92,7 +117,7 @@ struct ContentView: View {
 					HabitEdit(habit: habit)
 				}
 #if os(macOS)
-				.navigationSplitViewColumnWidth(min: 180, ideal: 200)
+				.navigationSplitViewColumnWidth(min: 240, ideal: 300)
 #endif
 				.toolbar {
 					ToolbarItem {
