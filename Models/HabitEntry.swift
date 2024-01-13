@@ -4,16 +4,16 @@ import SwiftData
 @Model
 final class HabitEntry {
 	@Relationship
-	var habit: Habit
+	var habit: Habit?
 
-	var count: Int
-	var timestamp: Date
-	var body: String
+	var count = 1
+	var timestamp = Date.now
+	var body = ""
 
-	init(habit: Habit, count: Int = 1, timestamp: Date? = nil, body: String = "") {
+	init(habit: Habit, count: Int = 1, timestamp: Date = .now, body: String = "") {
 		self.habit = habit
 		self.count = count
-		self.timestamp = timestamp ?? Date()
+		self.timestamp = timestamp
 		self.body = body
 	}
 }

@@ -51,18 +51,18 @@ extension CGColor {
 
 @Model
 final class Habit: Comparable {
-	@Attribute(.unique) var title: String
-	var createdAt: Date
-	var icon: String
+	var title = ""
+	var createdAt = Date.now
+	var icon = ""
 
-	var interval: HabitInterval
-	var intervalStartAt: Date
-	var intervalEndAt: Date
+	var interval = HabitInterval.week
+	var intervalStartAt = Date.now
+	var intervalEndAt = Date.now
 
-	var goalLabel: String
-	var goalCount: Int
+	var goalLabel: String = ""
+	var goalCount: Int = 1
 
-	var hexColor: UInt
+	var hexColor: UInt = 0
 	var color: CGColor {
 		get {
 			CGColor(srgbRed: Double((hexColor >> 16) & 0xff) / 255, green: Double((hexColor >> 08) & 0xff) / 255, blue: Double((hexColor >> 00) & 0xff) / 255, alpha: 1)
@@ -72,21 +72,19 @@ final class Habit: Comparable {
 		}
 	}
 
-	var completedUntil: Date
+	var completedUntil = Date.now
 	var completedAt: Date?
-	var completedCount: Int
-	var completedStreak: Int
+	var completedCount = 0
+	var completedStreak = 0
 
-	var notifyEnabled: Bool
-	var notifyAt: Date
+	var notifyEnabled = false
+	var notifyAt = Date.distantPast
 
 	@Relationship(deleteRule: .cascade, inverse: \HabitEntry.habit)
-	var allEntries: [HabitEntry] = []
+	var allEntries: [HabitEntry]? = []
 
 	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, completedAt: Date? = nil) {
-		let date = Date()
 		self.title = title
-		self.createdAt = date
 		self.icon = icon
 
 		self.interval = interval
@@ -97,12 +95,7 @@ final class Habit: Comparable {
 		self.goalLabel = goalLabel
 		self.goalCount = goalCount
 		self.hexColor = hexColor ?? .random(in: 999999...999999999)
-		self.completedUntil = Date()
 		self.completedAt = completedAt
-		self.completedCount = 0
-		self.completedStreak = 0
-		self.notifyEnabled = false
-		self.notifyAt = Date.distantPast
 	}
 
 	static func < (lhs: Habit, rhs: Habit) -> Bool {

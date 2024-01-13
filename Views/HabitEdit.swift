@@ -21,7 +21,7 @@ struct HabitEdit: View {
 	init(habit: Habit) {
 		self.habit = habit
 		let id = habit.persistentModelID
-		self._allEntries = Query(filter: #Predicate { entry in entry.habit.persistentModelID == id })
+		self._allEntries = Query(filter: #Predicate { entry in entry.habit?.persistentModelID == id })
 	}
 
 	var entriesSection: some View {
@@ -57,8 +57,8 @@ struct HabitEdit: View {
 					withAnimation {
 						if let updateEntry {
 							updateEntry.count = updateEntryCount
-							if updateEntry.habit.completedUntil == updateEntry.habit.intervalEndAt && updateEntry.count < updateEntry.habit.goalCount {
-								updateEntry.habit.completedUntil = Date.distantPast
+							if habit.completedUntil == habit.intervalEndAt && updateEntry.count < habit.goalCount {
+								habit.completedUntil = Date.distantPast
 							}
 						}
 					}

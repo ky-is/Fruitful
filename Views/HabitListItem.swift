@@ -12,7 +12,7 @@ struct HabitListItem: View {
 		self.habit = habit
 		let minimum = habit.intervalStartAt
 		let id = habit.persistentModelID
-		self._activeEntries = Query(filter: #Predicate { entry in entry.habit.persistentModelID == id && entry.timestamp > minimum })
+		self._activeEntries = Query(filter: #Predicate { entry in entry.habit?.persistentModelID == id && entry.timestamp > minimum })
 	}
 
 	private func onHabit(habit: Habit) {
@@ -63,6 +63,7 @@ struct HabitListItem: View {
 					.fixedSize(horizontal: true, vertical: false)
 			}
 		}
+			.buttonStyle(.plain)
 			.tint(Color(cgColor: habit.color))
 			.swipeActions(edge: .trailing) {
 				NavigationLink(destination: HabitEdit(habit: habit)) {
