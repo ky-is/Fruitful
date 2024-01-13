@@ -3,30 +3,17 @@ import SwiftData
 
 @Model
 final class HabitEntry {
+	@Relationship
 	var habit: Habit
+
 	var count: Int
-	var startedAt: Date
-	var completedAt: Date?
-	var endsAt: Date
+	var timestamp: Date
+	var body: String
 
-	init(habit: Habit) {
-		let now = Date()
-		self.startedAt = now
+	init(habit: Habit, count: Int = 1, timestamp: Date? = nil, body: String = "") {
 		self.habit = habit
-		self.count = 0
-
-		let calendar = Calendar.current
-		self.endsAt = switch habit.interval {
-//		case .hour:
-//			calendar.date(byAdding: .hour, value: 1, to: calendar.date(bySettingHour: calendar.component(.hour, from: startDate), minute: 0, second: 0, of: startDate)!)!
-		case .day:
-			calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))!
-		case .week:
-			calendar.date(byAdding: .weekOfMonth, value: 1, to: calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!)!
-		case .month:
-			calendar.date(byAdding: .month, value: 1, to: calendar.date(from: calendar.dateComponents([.year, .month], from: now))!)!
-		case .year:
-			calendar.date(byAdding: .year, value: 1, to: calendar.date(from: calendar.dateComponents([.year], from: now))!)!
-		}
+		self.count = count
+		self.timestamp = timestamp ?? Date()
+		self.body = body
 	}
 }

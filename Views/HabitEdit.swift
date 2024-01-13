@@ -1,7 +1,10 @@
 import SwiftUI
+import SwiftData
 
 struct HabitEdit: View {
 	@Bindable var habit: Habit
+
+	@Query private var allEntries: [HabitEntry]
 
 	@Environment(\.self) private var environment
 	@Environment(\.modelContext) private var modelContext
@@ -15,6 +18,12 @@ struct HabitEdit: View {
 		case title, goalCount, notifyAt
 	}
 
+	init(habit: Habit) {
+		self.habit = habit
+		let id = habit.persistentModelID
+		self._allEntries = Query(filter: #Predicate { entry in entry.habit.persistentModelID == id })
+	}
+
 	var entriesSection: some View {
 		let showsPrompt = Binding {
 			return updateEntry != nil
@@ -22,38 +31,34 @@ struct HabitEdit: View {
 			updateEntry = nil
 		}
 		return Section {
-			ForEach(habit.entries) { entry in
-				let isActiveEntry = entry == habit.activeEntry
+			ForEach(allEntries) { entry in
 				HStack {
 					Text(entry.count, format: .number)
-					Text(entry.endsAt, format: .dateTime)
+					Text(entry.timestamp, format: .dateTime)
 				}
-					.fontWeight(isActiveEntry ? .bold : .regular)
 					.onTapGesture {
 						updateEntryCount = entry.count
 						updateEntry = entry
 					}
 					.swipeActions(edge: .trailing) {
-						if !isActiveEntry {
-							Button("Delete", role: .destructive) {
-								modelContext.delete(entry)
-							}
+						Button("Delete", role: .destructive) {
+							modelContext.delete(entry)
 						}
 					}
 			}
 		}
 			.alert("Update count", isPresented: showsPrompt) {
 				TextField("Entry count", value: $updateEntryCount, format: .number)
-	#if !os(macOS)
+#if !os(macOS)
 					.keyboardType(.numberPad)
-	#endif
+#endif
 					.submitLabel(.done)
 				Button("Update") {
 					withAnimation {
 						if let updateEntry {
 							updateEntry.count = updateEntryCount
-							if updateEntry.habit.completedFor == updateEntry.endsAt && updateEntry.count < updateEntry.habit.goalCount {
-								updateEntry.habit.completedFor = Date.distantPast
+							if updateEntry.habit.completedUntil == updateEntry.habit.intervalEndAt && updateEntry.count < updateEntry.habit.goalCount {
+								updateEntry.habit.completedUntil = Date.distantPast
 							}
 						}
 					}

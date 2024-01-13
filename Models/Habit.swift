@@ -12,6 +12,29 @@ enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 		case .year: "yearly"
 		}
 	}
+
+	var startDate: Date {
+		let calendar = Calendar.current
+		let now = Date()
+		return switch self {
+//		case .hour: calendar.date(bySettingHour: calendar.component(.hour, from: startDate), minute: 0, second: 0, of: startDate)!
+		case .day: calendar.startOfDay(for: now)
+		case .week: calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
+		case .month: calendar.date(from: calendar.dateComponents([.year, .month], from: now))!
+		case .year: calendar.date(from: calendar.dateComponents([.year], from: now))!
+		}
+	}
+
+	func getEndDate(from startDate: Date) -> Date {
+		let addComponent: Calendar.Component = switch self {
+//		case .hour: .hour
+		case .day: .day
+		case .week: .weekOfMonth
+		case .month: .month
+		case .year: .year
+		}
+		return Calendar.current.date(byAdding: addComponent, value: 1, to: startDate)!
+	}
 }
 
 extension CGColor {
@@ -27,11 +50,15 @@ extension CGColor {
 }
 
 @Model
-final class Habit {
+final class Habit: Comparable {
 	@Attribute(.unique) var title: String
 	var createdAt: Date
 	var icon: String
+
 	var interval: HabitInterval
+	var intervalStartAt: Date
+	var intervalEndAt: Date
+
 	var goalLabel: String
 	var goalCount: Int
 
@@ -45,7 +72,7 @@ final class Habit {
 		}
 	}
 
-	var completedFor: Date
+	var completedUntil: Date
 	var completedAt: Date?
 	var completedCount: Int
 	var completedStreak: Int
@@ -54,24 +81,47 @@ final class Habit {
 	var notifyAt: Date
 
 	@Relationship(deleteRule: .cascade, inverse: \HabitEntry.habit)
-	var entries: [HabitEntry] = []
-	var activeEntry: HabitEntry?
+	var allEntries: [HabitEntry] = []
 
 	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, completedAt: Date? = nil) {
 		let date = Date()
 		self.title = title
 		self.createdAt = date
 		self.icon = icon
+
 		self.interval = interval
+		let startDate = interval.startDate
+		self.intervalStartAt = startDate
+		self.intervalEndAt = interval.getEndDate(from: startDate)
+
 		self.goalLabel = goalLabel
 		self.goalCount = goalCount
-		self.hexColor = hexColor ?? .random(in: 99999...999999999)
-		self.completedFor = Date()
+		self.hexColor = hexColor ?? .random(in: 999999...999999999)
+		self.completedUntil = Date()
 		self.completedAt = completedAt
 		self.completedCount = 0
 		self.completedStreak = 0
 		self.notifyEnabled = false
 		self.notifyAt = Date.distantPast
-		self.activeEntry = HabitEntry(habit: self)
+	}
+
+	static func < (lhs: Habit, rhs: Habit) -> Bool {
+		lhs.title < rhs.title
+	}
+
+	func updateCompleted(newCount: Int) {
+		if completedUntil < intervalEndAt {
+			if newCount >= goalCount {
+				completedUntil = intervalEndAt
+				completedAt = Date()
+				completedCount += 1
+				completedStreak += 1 //TODO
+			}
+		} else if newCount < goalCount {
+			completedUntil = Date.distantPast
+			completedAt = nil
+			completedCount -= 1
+			completedStreak -= 1 //TODO
+		}
 	}
 }
