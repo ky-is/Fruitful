@@ -57,7 +57,11 @@ private struct SymbolPicker: View {
 				}
 			}
 				.font(.system(size: symbolSize))
+			#if os(macOS)
+				.searchable(text: $searchText)
+			#else
 				.searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+			#endif
 		}
 	}
 }
