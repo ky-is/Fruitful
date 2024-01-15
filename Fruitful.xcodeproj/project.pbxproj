@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		240CFDA32B4CAF3900B12212 /* SeedHabits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240CFDA22B4CAF3900B12212 /* SeedHabits.swift */; };
+		241000F52B537510003D6B9E /* Foundation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241000F42B537510003D6B9E /* Foundation+Extensions.swift */; };
 		241272F72B4A4A4E00CC2C2F /* FruitfulApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241272F62B4A4A4E00CC2C2F /* FruitfulApp.swift */; };
 		241272F92B4A4A4E00CC2C2F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241272F82B4A4A4E00CC2C2F /* ContentView.swift */; };
 		241272FB2B4A4A4E00CC2C2F /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241272FA2B4A4A4E00CC2C2F /* Habit.swift */; };
@@ -16,12 +17,14 @@
 		242B2D2F2B4CE7BF0064075F /* HabitListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242B2D2E2B4CE7BF0064075F /* HabitListItem.swift */; };
 		245EC1BC2B4A5B1800B0EEAD /* HabitEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245EC1BB2B4A5B1800B0EEAD /* HabitEdit.swift */; };
 		245EC1BF2B4A5E7C00B0EEAD /* ModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245EC1BE2B4A5E7C00B0EEAD /* ModelContainer.swift */; };
+		2461A6962B54B463004CBB29 /* SwiftUI+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2461A6952B54B463004CBB29 /* SwiftUI+Extensions.swift */; };
 		247317842B4CBBAE00F7A6EC /* HabitEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247317832B4CBBAE00F7A6EC /* HabitEntry.swift */; };
 		249DB82A2B4B2A3E007F3841 /* ProgressCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249DB8292B4B2A3E007F3841 /* ProgressCircle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		240CFDA22B4CAF3900B12212 /* SeedHabits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedHabits.swift; sourceTree = "<group>"; };
+		241000F42B537510003D6B9E /* Foundation+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Extensions.swift"; sourceTree = "<group>"; };
 		241272F32B4A4A4E00CC2C2F /* Fruitful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fruitful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		241272F62B4A4A4E00CC2C2F /* FruitfulApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FruitfulApp.swift; sourceTree = "<group>"; };
 		241272F82B4A4A4E00CC2C2F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -33,6 +36,7 @@
 		242B2D2E2B4CE7BF0064075F /* HabitListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitListItem.swift; sourceTree = "<group>"; };
 		245EC1BB2B4A5B1800B0EEAD /* HabitEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEdit.swift; sourceTree = "<group>"; };
 		245EC1BE2B4A5E7C00B0EEAD /* ModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainer.swift; sourceTree = "<group>"; };
+		2461A6952B54B463004CBB29 /* SwiftUI+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUI+Extensions.swift"; sourceTree = "<group>"; };
 		247317832B4CBBAE00F7A6EC /* HabitEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEntry.swift; sourceTree = "<group>"; };
 		249DB8292B4B2A3E007F3841 /* ProgressCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressCircle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -52,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				241272F62B4A4A4E00CC2C2F /* FruitfulApp.swift */,
+				2461A6942B54B44F004CBB29 /* Extensions */,
 				241272F52B4A4A4E00CC2C2F /* Views */,
 				241273082B4A4A7900CC2C2F /* Models */,
 				249DB8282B4B2974007F3841 /* Assets */,
@@ -94,6 +99,15 @@
 				247317832B4CBBAE00F7A6EC /* HabitEntry.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		2461A6942B54B44F004CBB29 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				241000F42B537510003D6B9E /* Foundation+Extensions.swift */,
+				2461A6952B54B463004CBB29 /* SwiftUI+Extensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		249DB8282B4B2974007F3841 /* Assets */ = {
@@ -179,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				245EC1BF2B4A5E7C00B0EEAD /* ModelContainer.swift in Sources */,
+				2461A6962B54B463004CBB29 /* SwiftUI+Extensions.swift in Sources */,
 				245EC1BC2B4A5B1800B0EEAD /* HabitEdit.swift in Sources */,
 				241272F92B4A4A4E00CC2C2F /* ContentView.swift in Sources */,
 				241272FB2B4A4A4E00CC2C2F /* Habit.swift in Sources */,
@@ -186,6 +201,7 @@
 				242B2D2F2B4CE7BF0064075F /* HabitListItem.swift in Sources */,
 				247317842B4CBBAE00F7A6EC /* HabitEntry.swift in Sources */,
 				240CFDA32B4CAF3900B12212 /* SeedHabits.swift in Sources */,
+				241000F52B537510003D6B9E /* Foundation+Extensions.swift in Sources */,
 				241272F72B4A4A4E00CC2C2F /* FruitfulApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
