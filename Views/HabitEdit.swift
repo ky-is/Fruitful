@@ -137,6 +137,14 @@ struct HabitEdit: View {
 						.focused($focusedField, equals: .notifyAt)
 				}
 			}
+			Section {
+				Picker("Priority", selection: $habit.priority) {
+					ForEach(HabitPriority.allCases, id: \.self) { priority in
+						Label(priority.description.capitalized, systemImage: priority.icon)
+					}
+				}
+					.tint(habit.color)
+			}
 			entriesSection
 		}
 			.tint(habit.color)

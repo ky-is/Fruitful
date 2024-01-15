@@ -15,6 +15,7 @@ final class Habit {
 	var goalCount: Int = 1
 
 	var hexColor: UInt = 0
+	var priority: HabitPriority = HabitPriority.normal
 
 	var completedUntil = Date.now
 	var completedAt: Date?
@@ -27,7 +28,7 @@ final class Habit {
 	@Relationship(deleteRule: .cascade, inverse: \HabitEntry.habit)
 	var allEntries: [HabitEntry]? = []
 
-	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, completedAt: Date? = nil) {
+	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, priority: HabitPriority = .normal, completedAt: Date? = nil) {
 		self.title = title
 		self.icon = icon
 
@@ -39,6 +40,7 @@ final class Habit {
 		self.goalLabel = goalLabel
 		self.goalCount = goalCount
 		self.hexColor = hexColor ?? .random(in: 999999...999999999)
+		self.priority = priority
 
 		self.completedAt = completedAt
 	}

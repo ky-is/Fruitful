@@ -23,17 +23,22 @@ struct ContentView: View {
 
 	private var groupedHabits: [(label: String, values: [Habit])] {
 		let now = Date()
-		let groupKeys = ["Up Now", "Upcoming", "Completed"]
+		let upNow = "Up Now"
+		let upcoming = "Upcoming"
+		let completed = "Completed"
+		let groupKeys = [upNow, upcoming, completed]
 		let groupedHabits = Dictionary(grouping: habits, by: { habit in
 			let timeRemainingForUpNow = max(TimeInterval.day, habit.interval.duration / 7)
 			if habit.completedUntil >= habit.intervalEndAt {
-				return groupKeys[2]
+				return completed
 			}
-			let timeLeft = habit.intervalEndAt.timeIntervalSince(now)
-			if timeLeft < timeRemainingForUpNow {
-				return groupKeys[0]
+			if habit.priority != .low {
+				let timeLeft = habit.intervalEndAt.timeIntervalSince(now)
+				if timeLeft < timeRemainingForUpNow {
+					return upNow
+				}
 			}
-			return groupKeys[1]
+			return upcoming
 		})
 		return groupKeys.compactMap {
 			guard let values = groupedHabits[$0] else { return nil }
