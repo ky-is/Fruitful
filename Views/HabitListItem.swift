@@ -15,24 +15,21 @@ struct HabitListItem: View {
 		self._activeEntries = Query(filter: #Predicate { entry in entry.habit?.persistentModelID == id && entry.timestamp > minimum })
 	}
 
-	private func onHabit(habit: Habit) {
-		withAnimation {
-			let newCount = activeEntries.count + 1
-			let entry = HabitEntry(habit: habit)
-			modelContext.insert(entry)
-			habit.updateCompleted(newCount: newCount)
-		}
-	}
-
 	var body: some View {
 		Button {
-			onHabit(habit: habit)
+			withAnimation {
+				let newCount = activeEntries.count + 1
+				let entry = HabitEntry(habit: habit)
+				modelContext.insert(entry)
+				habit.updateCompleted(newCount: newCount)
+			}
 		} label: {
-			HStack(spacing: 16) {
+			HStack {
 				Image(systemName: !habit.icon.isEmpty ? habit.icon : "diamond")
-					.resizable()
-					.frame(width: 32, height: 32)
-					.foregroundStyle(Color(cgColor: habit.color))
+					.imageScale(.large)
+					.font(.system(size: 24))
+					.frame(width: 44)
+					.foregroundStyle(habit.color)
 				VStack(alignment: .leading) {
 					if habit.title.isEmpty {
 						Text("Unlabeled")
@@ -64,15 +61,19 @@ struct HabitListItem: View {
 			}
 		}
 			.buttonStyle(.plain)
-			.tint(Color(cgColor: habit.color))
+			.tint(habit.color)
 			.swipeActions(edge: .trailing) {
 				NavigationLink(destination: HabitEdit(habit: habit)) {
-					Text("Edit")
+					Label("Edit", systemImage: "pencil")
 				}
 					.tint(.accentColor)
-				Button("Delete", role: .destructive) {
-					modelContext.delete(habit)
-					habit.updateCompleted(newCount: activeEntries.count - 1)
+				if habit.completedUntil < .now {
+					Button(role: .destructive) {
+						habit.completedUntil = habit.intervalEndAt //TODO confirmation
+					} label: {
+						Label("Snooze", systemImage: "moon.zzz") // zzz
+					}
+						.tint(.blue)
 				}
 			}
 	}

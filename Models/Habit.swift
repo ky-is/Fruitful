@@ -63,7 +63,7 @@ final class Habit: Comparable {
 	var goalCount: Int = 1
 
 	var hexColor: UInt = 0
-	var color: CGColor {
+	var cgColor: CGColor {
 		get {
 			CGColor(srgbRed: Double((hexColor >> 16) & 0xff) / 255, green: Double((hexColor >> 08) & 0xff) / 255, blue: Double((hexColor >> 00) & 0xff) / 255, alpha: 1)
 		}
@@ -71,6 +71,10 @@ final class Habit: Comparable {
 			hexColor = newValue.hexColor
 		}
 	}
+	var color: Color {
+		Color(cgColor: cgColor)
+	}
+
 
 	var completedUntil = Date.now
 	var completedAt: Date?

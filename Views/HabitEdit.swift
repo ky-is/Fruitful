@@ -1,6 +1,21 @@
 import SwiftUI
 import SwiftData
 
+struct HabitEditEntry: View {
+	@Bindable var entry: HabitEntry
+
+	var body: some View {
+		VStack {
+			TextField("Count:", value: $entry.count, format: .number)
+				.labelStyle(.titleOnly)
+//			LabeledContent("Count:") {
+//					.labelsHidden()
+//			}
+			DatePicker("Timestamp:", selection: $entry.timestamp)
+		}
+	}
+}
+
 struct HabitEdit: View {
 	@Bindable var habit: Habit
 
@@ -8,11 +23,12 @@ struct HabitEdit: View {
 
 	@Environment(\.self) private var environment
 	@Environment(\.modelContext) private var modelContext
+	@Environment(\.dismiss) private var dismiss
 
 	@FocusState private var focusedField: FocusedField?
 
 	@State private var updateEntry: HabitEntry?
-	@State private var updateEntryCount = 0
+	@State private var showIcons = false
 
 	private enum FocusedField {
 		case title, goalCount, notifyAt
@@ -24,51 +40,50 @@ struct HabitEdit: View {
 		self._allEntries = Query(filter: #Predicate { entry in entry.habit?.persistentModelID == id })
 	}
 
+	private func recalculateCompleted(entry: HabitEntry, newCount: Int) {
+		let startAt = habit.intervalStartAt
+		let activeCount = allEntries
+			.filter { $0.timestamp > startAt }
+			.reduce(0) { acc, e in acc + (e != entry ? e.count : newCount) }
+		habit.updateCompleted(newCount: activeCount)
+	}
+
 	var entriesSection: some View {
-		let showsPrompt = Binding {
-			return updateEntry != nil
-		} set: { _,_ in
-			updateEntry = nil
-		}
-		return Section {
+		Section {
 			ForEach(allEntries) { entry in
-				HStack {
-					Text(entry.count, format: .number)
-					Text(entry.timestamp, format: .dateTime)
-				}
-					.onTapGesture {
-						updateEntryCount = entry.count
-						updateEntry = entry
+				ZStack {
+					Color.clear
+						.contentShape(.rect)
+						.onTapGesture {
+							updateEntry = entry == updateEntry ? nil : entry
+						}
+					if entry == updateEntry {
+						HabitEditEntry(entry: entry)
+							.onChange(of: entry.count) { oldValue, newValue in
+								recalculateCompleted(entry: entry, newCount: newValue)
+							}
+							.onChange(of: entry.timestamp) { oldValue, newValue in
+								recalculateCompleted(entry: entry, newCount: newValue > habit.intervalStartAt ? entry.count : 0)
+							}
+					} else {
+						HStack {
+							Text(entry.count, format: .number)
+							Spacer()
+							Text(entry.timestamp, format: .dateTime)
+						}
 					}
+				}
 					.swipeActions(edge: .trailing) {
 						Button("Delete", role: .destructive) {
 							modelContext.delete(entry)
+							recalculateCompleted(entry: entry, newCount: 0)
 						}
 					}
 			}
 		}
-			.alert("Update count", isPresented: showsPrompt) {
-				TextField("Entry count", value: $updateEntryCount, format: .number)
-#if !os(macOS)
-					.keyboardType(.numberPad)
-#endif
-					.submitLabel(.done)
-				Button("Update") {
-					withAnimation {
-						if let updateEntry {
-							updateEntry.count = updateEntryCount
-							if habit.completedUntil == habit.intervalEndAt && updateEntry.count < habit.goalCount {
-								habit.completedUntil = Date.distantPast
-							}
-						}
-					}
-				}
-				Button("Cancel", role: .cancel) { }
-			}
 	}
 
 	var body: some View {
-		let tintColor = Color(cgColor: habit.color)
 		Form {
 			Section {
 				Picker("Interval", selection: $habit.interval) {
@@ -76,10 +91,10 @@ struct HabitEdit: View {
 						Text(interval.description.capitalized)
 					}
 				}
-					.tint(Color(cgColor: habit.color))
-				HStack {
-					Text("Goal Count")
+					.tint(habit.color)
+				LabeledContent("Goal Count") {
 					TextField("Goal Count", value: $habit.goalCount, format: .number)
+						.labelsHidden()
 						.focused($focusedField, equals: .goalCount)
 #if !os(macOS)
 						.keyboardType(.decimalPad)
@@ -97,20 +112,21 @@ struct HabitEdit: View {
 #endif
 					} icon: {
 						Button {
-							//TODO
+							showIcons = true
 						} label: {
 							let hasIcon = !habit.icon.isEmpty
 							Image(systemName: hasIcon ? habit.icon : "questionmark.diamond.fill")
-								.tint(hasIcon ? nil : tintColor.opacity(0.5))
+								.imageScale(.large)
+								.foregroundStyle(hasIcon ? habit.color : .secondary)
+								.frame(minWidth: 40)
 						}
 							.buttonStyle(.plain)
 					}
-					ColorPicker("Habit Color", selection: $habit.color, supportsOpacity: false)
+					ColorPicker("Habit Color", selection: $habit.cgColor, supportsOpacity: false)
 						.labelsHidden()
 				}
 					.font(.title2)
 					.textCase(nil)
-					.tint(tintColor)
 					.padding(.bottom)
 					.padding(.leading, -16)
 			}
@@ -123,7 +139,7 @@ struct HabitEdit: View {
 			}
 			entriesSection
 		}
-			.tint(tintColor)
+			.tint(habit.color)
 			.defaultFocus($focusedField, .title, priority: .userInitiated)
 			.multilineTextAlignment(.trailing)
 			.onChange(of: habit.notifyEnabled) { oldValue, notifyEnabled in
@@ -142,6 +158,15 @@ struct HabitEdit: View {
 					}
 				}
 			}
+			.toolbar {
+				ToolbarItem(placement: .destructiveAction) {
+					Button("Delete", role: .destructive) {
+						modelContext.delete(habit)
+						dismiss()
+					}
+				}
+			}
+			.modifier(SymbolPickerPopover(show: $showIcons, name: $habit.icon, accentColor: habit.color))
 	}
 }
 
