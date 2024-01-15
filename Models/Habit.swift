@@ -13,6 +13,15 @@ enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 		}
 	}
 
+	var duration: TimeInterval {
+		switch self {
+		case .day: .day
+		case .week: .week
+		case .month: .day * 28
+		case .year: .day * 365
+		}
+	}
+
 	var startDate: Date {
 		let calendar = Calendar.current
 		let now = Date()

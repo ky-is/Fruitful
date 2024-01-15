@@ -23,9 +23,9 @@ struct ContentView: View {
 
 	private var groupedHabits: [(label: String, values: [Habit])] {
 		let now = Date()
-		let timeRemainingForUpNow: TimeInterval = 24 * 60 * 60 //TODO dynamic
 		let groupKeys = ["Up Now", "Upcoming", "Completed"]
 		let groupedHabits = Dictionary(grouping: habits, by: { habit in
+			let timeRemainingForUpNow = max(TimeInterval.day, habit.interval.duration / 7)
 			if habit.completedUntil >= habit.intervalEndAt {
 				return groupKeys[2]
 			}
