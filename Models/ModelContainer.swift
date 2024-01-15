@@ -61,5 +61,7 @@ struct PreviewModel {
 		habit = Habit(title: "Test Test Test Test Test")
 		habit.goalCount = 2
 		container.mainContext.insert(habit)
+		let entry = HabitEntry(habit: habit)
+		container.mainContext.insert(entry)
 	}
 }
