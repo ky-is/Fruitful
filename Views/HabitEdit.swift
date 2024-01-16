@@ -8,6 +8,9 @@ struct HabitEditEntry: View {
 		VStack {
 			TextField("Count:", value: $entry.count, format: .number)
 				.labelStyle(.titleOnly)
+#if !os(macOS)
+				.keyboardType(.decimalPad)
+#endif
 //			LabeledContent("Count:") {
 //					.labelsHidden()
 //			}

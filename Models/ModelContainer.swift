@@ -29,7 +29,6 @@ struct AppModel {
 		}
 #if DEBUG // Seed data
 		do {
-
 			let context = container.mainContext
 			let habits = try context.fetch(FetchDescriptor<Habit>())
 			let habitEntries = try context.fetch(FetchDescriptor<HabitEntry>())

@@ -3,7 +3,7 @@ import SwiftUI
 struct SymbolPickerPopover: ViewModifier {
 	@Binding var show: Bool
 	@Binding var name: String
-	let accentColor: Color?
+	let color: Color?
 
 	@Environment(\.dismiss) private var dismiss
 
@@ -16,7 +16,7 @@ struct SymbolPickerPopover: ViewModifier {
 						.toolbar {
 							Button("Dismiss", role: .cancel) { dismiss() }
 						}
-						.tint(accentColor)
+						.tint(color)
 				}
 			}
 	}
@@ -68,5 +68,5 @@ private struct SymbolPicker: View {
 
 #Preview {
 	Spacer()
-		.modifier(SymbolPickerPopover(show: .constant(true), name: .constant(""), accentColor: nil))
+		.modifier(SymbolPickerPopover(show: .constant(true), name: .constant(""), color: nil))
 }

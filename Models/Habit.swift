@@ -109,7 +109,7 @@ enum HabitInterval: Codable, CaseIterable, CustomStringConvertible {
 
 	var description: String {
 		switch self {
-		case .hour: "daily"
+		case .hour: "hourly"
 		case .day: "daily"
 		case .week: "weekly"
 		case .month: "monthly"
