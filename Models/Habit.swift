@@ -28,6 +28,8 @@ final class Habit {
 	@Relationship(deleteRule: .cascade, inverse: \HabitEntry.habit)
 	var allEntries: [HabitEntry]? = []
 
+	var archived = false
+
 	init(title: String, icon: String = "", interval: HabitInterval = .day, goalLabel: String = "", goalCount: Int = 1, hexColor: UInt? = nil, priority: HabitPriority = .normal, completedAt: Date? = nil) {
 		self.title = title
 		self.icon = icon

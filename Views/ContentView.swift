@@ -5,7 +5,7 @@ struct ContentView: View {
 	@Environment(\.modelContext) private var modelContext
 	@Environment(\.scenePhase) private var scenePhase
 
-	@Query private var habits: [Habit]
+	@Query(filter: #Predicate<Habit>{ !$0.archived }) private var habits: [Habit]
 
 	@State private var newHabitPrompt = false
 	@State private var newHabitName = ""

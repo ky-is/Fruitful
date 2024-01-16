@@ -29,6 +29,7 @@ struct HabitEdit: View {
 
 	@State private var updateEntry: HabitEntry?
 	@State private var showIcons = false
+	@State private var showDeleteConfirmation = false
 
 	private enum FocusedField {
 		case title, goalCount, notifyAt
@@ -168,13 +169,23 @@ struct HabitEdit: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .destructiveAction) {
-					Button("Delete", role: .destructive) {
-						modelContext.delete(habit)
-						dismiss()
+					Button("Archive...") {
+						showDeleteConfirmation.toggle()
 					}
 				}
 			}
-			.modifier(SymbolPickerPopover(show: $showIcons, name: $habit.icon, accentColor: habit.color))
+			.modifier(SymbolPickerPopover(show: $showIcons, name: $habit.icon, color: habit.color))
+			.confirmationDialog("Delete or archive \(habit.title)", isPresented: $showDeleteConfirmation) {
+				Button("Permanently Delete", role: .destructive) {
+					modelContext.delete(habit)
+					dismiss()
+				}
+				Button("Archive") {
+					habit.archived = true
+				}
+			} message: {
+				Text("Archive this habit to hide it from view while preserving your history for the activity")
+			}
 	}
 }
 
