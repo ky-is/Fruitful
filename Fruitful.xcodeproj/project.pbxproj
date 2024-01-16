@@ -14,6 +14,7 @@
 		241272FB2B4A4A4E00CC2C2F /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241272FA2B4A4A4E00CC2C2F /* Habit.swift */; };
 		241272FD2B4A4A4F00CC2C2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 241272FC2B4A4A4F00CC2C2F /* Assets.xcassets */; };
 		241273012B4A4A4F00CC2C2F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 241273002B4A4A4F00CC2C2F /* Preview Assets.xcassets */; };
+		241F97152B55BB6200C3C81E /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241F97142B55BB6200C3C81E /* UIKit.swift */; };
 		242B2D2F2B4CE7BF0064075F /* HabitListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242B2D2E2B4CE7BF0064075F /* HabitListItem.swift */; };
 		245EC1BC2B4A5B1800B0EEAD /* HabitEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245EC1BB2B4A5B1800B0EEAD /* HabitEdit.swift */; };
 		245EC1BF2B4A5E7C00B0EEAD /* ModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245EC1BE2B4A5E7C00B0EEAD /* ModelContainer.swift */; };
@@ -35,6 +36,7 @@
 		241272FE2B4A4A4F00CC2C2F /* Fruitful.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fruitful.entitlements; sourceTree = "<group>"; };
 		241273002B4A4A4F00CC2C2F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		241273022B4A4A4F00CC2C2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		241F97142B55BB6200C3C81E /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
 		242B2D2E2B4CE7BF0064075F /* HabitListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitListItem.swift; sourceTree = "<group>"; };
 		245EC1BB2B4A5B1800B0EEAD /* HabitEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEdit.swift; sourceTree = "<group>"; };
 		245EC1BE2B4A5E7C00B0EEAD /* ModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainer.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 			children = (
 				241000F42B537510003D6B9E /* Foundation+Extensions.swift */,
 				2461A6952B54B463004CBB29 /* SwiftUI+Extensions.swift */,
+				241F97142B55BB6200C3C81E /* UIKit.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -202,6 +205,7 @@
 				2461A6962B54B463004CBB29 /* SwiftUI+Extensions.swift in Sources */,
 				245EC1BC2B4A5B1800B0EEAD /* HabitEdit.swift in Sources */,
 				241272F92B4A4A4E00CC2C2F /* ContentView.swift in Sources */,
+				241F97152B55BB6200C3C81E /* UIKit.swift in Sources */,
 				247E92512B5462E800909F51 /* SFSymbols.swift in Sources */,
 				241272FB2B4A4A4E00CC2C2F /* Habit.swift in Sources */,
 				249DB82A2B4B2A3E007F3841 /* ProgressCircle.swift in Sources */,
