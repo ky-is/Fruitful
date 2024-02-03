@@ -107,7 +107,7 @@ struct HabitListItem: View {
 				habitDetails
 			}
 			Spacer()
-			ProgressCircle(habit: habit, count: activeEntries.count, size: 24)
+			ProgressCircle(habit: habit, count: activeEntries.count, size: 28)
 				.fixedSize(horizontal: true, vertical: false)
 		}
 	}

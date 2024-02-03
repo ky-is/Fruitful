@@ -7,12 +7,22 @@ struct ProgressCircle: View {
 
 	var body: some View {
 		let lineWidth: Double = 6 // size / 6
-		let progress = Double(count) / Double(habit.goalCount)
+		let progress = min(1, Double(count) / Double(habit.goalCount))
+		let leafSize = pow(size * 8, 0.5)
+		let inset = progress < 1 ? 0.025 : 0.09
 		ZStack {
+			if progress < 1 {
+				Circle()
+					.stroke(habit.color.tertiary, lineWidth: lineWidth)
+			} else {
+				Ellipse()
+					.fill(habit.color)
+					.rotationEffect(.degrees(36), anchor: .bottomLeading)
+					.frame(width: leafSize * 0.4, height: leafSize)
+					.position(x: size * 0.475 - lineWidth * 0.1, y: -lineWidth * 1.4)
+			}
 			Circle()
-				.stroke(habit.color.tertiary, lineWidth: lineWidth)
-			Circle()
-				.trim(from: 0, to: progress)
+				.trim(from: inset, to: progress * (1 - inset))
 				.stroke(habit.color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 				.rotationEffect(.degrees(-90))
 				.animation(.easeOut, value: progress)
@@ -22,5 +32,12 @@ struct ProgressCircle: View {
 }
 
 #Preview {
-	ProgressCircle(habit: PreviewModel.preview.habit, count: 1, size: 32)
+	Group {
+		ProgressCircle(habit: PreviewModel.preview.habit, count: 0, size: 28)
+		ProgressCircle(habit: PreviewModel.preview.habit, count: 1, size: 28)
+		ProgressCircle(habit: PreviewModel.preview.habit, count: 2, size: 28)
+		ProgressCircle(habit: PreviewModel.preview.habit, count: 1, size: 64)
+		ProgressCircle(habit: PreviewModel.preview.habit, count: 2, size: 64)
+	}
+		.padding()
 }
