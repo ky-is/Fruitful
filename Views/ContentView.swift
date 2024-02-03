@@ -7,8 +7,6 @@ struct ContentView: View {
 
 	@Query(filter: #Predicate<Habit>{ !$0.archived }) private var habits: [Habit]
 
-	@State private var newHabitPrompt = false
-	@State private var newHabitName = ""
 	@AppStorage("asGrid") private var asGrid = true
 
 	private func updateHabitIntervals() {
@@ -22,19 +20,19 @@ struct ContentView: View {
 	}
 
 	private var groupedHabits: [(label: String, values: [Habit])] {
-		let now = Date()
+		let now = Date.now
 		let upNow = "Up Now"
 		let upcoming = "Upcoming"
 		let completed = "Completed"
 		let groupKeys = [upNow, upcoming, completed]
 		let groupedHabits = Dictionary(grouping: habits, by: { habit in
-			let timeRemainingForUpNow = max(TimeInterval.day, habit.interval.duration / 7)
 			if habit.completedUntil >= habit.intervalEndAt {
 				return completed
 			}
 			if habit.priority != .low {
+				let durationForUpNow = max(TimeInterval.day, habit.interval.duration * Double(habit.goalCount) / 7) // TODO base on how many active entries remain until goal
 				let timeLeft = habit.intervalEndAt.timeIntervalSince(now)
-				if timeLeft < timeRemainingForUpNow {
+				if timeLeft < durationForUpNow {
 					return upNow
 				}
 			}
@@ -46,19 +44,23 @@ struct ContentView: View {
 		}
 	}
 
-	private func onAddHabit() {
-		newHabitPrompt = true
-		newHabitName = ""
-	}
-
-	private var addSection: some View {
-		Section {
-			Button {
-				onAddHabit()
-			} label: {
-				Label("New Habit", systemImage: "plus")
-					.frame(idealHeight: 44)
-			}
+	private var addHabitButton: some View {
+		NavigationLink {
+			let habit = Habit(title: "")
+			HabitEdit(habit: habit)
+				.onAppear {
+					modelContext.insert(habit)
+				}
+				.onDisappear { //TODO never called
+					if habit.title.isEmpty {
+						withAnimation {
+							modelContext.delete(habit)
+						}
+					}
+				}
+		} label: {
+			Label("New Habit", systemImage: "plus")
+				.frame(idealHeight: 44)
 		}
 	}
 
@@ -84,7 +86,9 @@ struct ContentView: View {
 							}
 						}
 							.padding(.bottom)
-						addSection
+						Section {
+							addHabitButton
+						}
 							.buttonStyle(.bordered)
 					}
 				} else {
@@ -101,7 +105,9 @@ struct ContentView: View {
 									.font(.headline.smallCaps())
 							}
 						}
-						addSection
+						Section {
+							addHabitButton
+						}
 					}
 				}
 			}
@@ -129,28 +135,9 @@ struct ContentView: View {
 						}
 					}
 					ToolbarItem(placement: .primaryAction) {
-						Button {
-							onAddHabit()
-						} label: {
-							Label("Add Habit", systemImage: "plus")
-						}
+						addHabitButton
 					}
 				}
-				.alert("Name this Habit", isPresented: $newHabitPrompt) {
-					TextField("Name this habit", text: $newHabitName)
-#if !os(macOS)
-						.textInputAutocapitalization(.words)
-#endif
-						.submitLabel(.done)
-					Button("Create") {
-						withAnimation {
-							let newItem = Habit(title: newHabitName)
-							modelContext.insert(newItem)
-						}
-					}
-					Button("Cancel", role: .cancel) { }
-				}
-		
 		} detail: {
 			Text("Select an item")
 		}

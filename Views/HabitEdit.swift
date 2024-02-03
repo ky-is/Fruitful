@@ -154,6 +154,11 @@ struct HabitEdit: View {
 			.tint(habit.color)
 			.defaultFocus($focusedField, .title, priority: .userInitiated)
 			.multilineTextAlignment(.trailing)
+			.onAppear {
+				if habit.title.isEmpty {
+					focusedField = .title
+				}
+			}
 			.onChange(of: habit.notifyEnabled) { oldValue, notifyEnabled in
 				if notifyEnabled {
 					Task { @MainActor in
