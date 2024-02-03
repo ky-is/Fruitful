@@ -9,6 +9,8 @@ struct ContentView: View {
 
 	@AppStorage("asGrid") private var asGrid = true
 
+	@State private var selectedHabit: Habit?
+
 	private func updateHabitIntervals() {
 		print(#function)
 		let now = Date()
@@ -45,27 +47,25 @@ struct ContentView: View {
 	}
 
 	private var addHabitButton: some View {
-		NavigationLink {
+		Button {
 			let habit = Habit(title: "")
-			HabitEdit(habit: habit)
-				.onAppear {
-					modelContext.insert(habit)
-				}
-				.onDisappear { //TODO never called
-					if habit.title.isEmpty {
-						withAnimation {
-							modelContext.delete(habit)
-						}
-					}
-				}
+			selectedHabit = habit
+			modelContext.insert(habit)
 		} label: {
 			Label("New Habit", systemImage: "plus")
 				.frame(idealHeight: 44)
 		}
 	}
+	private var addHabitSection: some View {
+		Section {
+#if !os(macOS)
+			addHabitButton
+#endif
+		}
+	}
 
 	var body: some View {
-		NavigationSplitView {
+		NavigationStack {
 			Group {
 				if asGrid {
 					ScrollView {
@@ -73,7 +73,7 @@ struct ContentView: View {
 							ForEach(groupedHabits, id: \.label) { groupLabel, habits in
 								Section {
 									ForEach(habits) { habit in
-										HabitListItem(habit: habit, asGrid: true)
+										HabitListItem(habit: habit, asGrid: true, selectedHabit: $selectedHabit)
 											.padding(.horizontal, 4)
 											.padding(.bottom, 16)
 									}
@@ -86,9 +86,7 @@ struct ContentView: View {
 							}
 						}
 							.padding(.bottom)
-						Section {
-							addHabitButton
-						}
+						addHabitSection
 							.buttonStyle(.bordered)
 					}
 				} else {
@@ -96,7 +94,7 @@ struct ContentView: View {
 						ForEach(groupedHabits, id: \.label) { groupLabel, habits in
 							Section {
 								ForEach(habits) { habit in
-									HabitListItem(habit: habit, asGrid: false)
+									HabitListItem(habit: habit, asGrid: false, selectedHabit: $selectedHabit)
 //										.listRowSeparator(.hidden)
 										.frame(minHeight: 56)
 								}
@@ -105,9 +103,7 @@ struct ContentView: View {
 									.font(.headline.smallCaps())
 							}
 						}
-						Section {
-							addHabitButton
-						}
+						addHabitSection
 					}
 				}
 			}
@@ -120,12 +116,6 @@ struct ContentView: View {
 						updateHabitIntervals()
 					}
 				}
-				.navigationDestination(for: Habit.self) { habit in
-					HabitEdit(habit: habit)
-				}
-#if os(macOS)
-				.navigationSplitViewColumnWidth(min: 240, ideal: 300)
-#endif
 				.toolbar {
 					ToolbarItem(placement: .secondaryAction) {
 						Button {
@@ -138,8 +128,12 @@ struct ContentView: View {
 						addHabitButton
 					}
 				}
-		} detail: {
-			Text("Select an item")
+				.sheet(item: $selectedHabit) { habit in
+					NavigationStack {
+						HabitEdit(habit: habit)
+					}
+						.tint(habit.color)
+				}
 		}
 	}
 }

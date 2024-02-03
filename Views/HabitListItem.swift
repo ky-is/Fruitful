@@ -4,14 +4,16 @@ import SwiftData
 struct HabitListItem: View {
 	let habit: Habit
 	let asGrid: Bool
+	@Binding var selectedHabit: Habit?
 
 	@Query private var activeEntries: [HabitEntry]
 
 	@Environment(\.modelContext) private var modelContext
 
-	init(habit: Habit, asGrid: Bool) {
+	init(habit: Habit, asGrid: Bool, selectedHabit: Binding<Habit?>) {
 		self.habit = habit
 		self.asGrid = asGrid
+		self._selectedHabit = selectedHabit
 		let minimum = habit.intervalStartAt
 		let id = habit.persistentModelID
 		self._activeEntries = Query(filter: #Predicate { entry in entry.habit?.persistentModelID == id && entry.timestamp > minimum })
@@ -48,7 +50,9 @@ struct HabitListItem: View {
 
 	private var contextActions: some View {
 		Group {
-			NavigationLink(destination: HabitEdit(habit: habit)) {
+			Button {
+				selectedHabit = habit
+			} label: {
 				Label("Edit", systemImage: "pencil")
 			}
 				.tint(.accentColor)
@@ -127,8 +131,8 @@ struct HabitListItem: View {
 #Preview {
 	NavigationStack {
 		List {
-			HabitListItem(habit: PreviewModel.preview.habit, asGrid: false)
-			HabitListItem(habit: PreviewModel.preview.habit, asGrid: true)
+			HabitListItem(habit: PreviewModel.preview.habit, asGrid: false, selectedHabit: .constant(nil))
+			HabitListItem(habit: PreviewModel.preview.habit, asGrid: true, selectedHabit: .constant(nil))
 		}
 	}
 }

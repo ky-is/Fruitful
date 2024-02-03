@@ -176,6 +176,11 @@ struct HabitEdit: View {
 				}
 			}
 			.toolbar {
+				ToolbarItem(placement: .cancellationAction) {
+					Button("Dismiss") {
+						dismiss()
+					}
+				}
 				ToolbarItem(placement: .destructiveAction) {
 					Button("Archive...") {
 						showDeleteConfirmation.toggle()
