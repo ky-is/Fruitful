@@ -9,6 +9,7 @@ struct ContentView: View {
 
 	@State private var newHabitPrompt = false
 	@State private var newHabitName = ""
+	@AppStorage("asGrid") private var asGrid = true
 
 	private func updateHabitIntervals() {
 		print(#function)
@@ -46,20 +47,62 @@ struct ContentView: View {
 		}
 	}
 
+	private func onAddHabit() {
+		newHabitPrompt = true
+		newHabitName = ""
+	}
+
+	private var addSection: some View {
+		Section {
+			Button {
+				onAddHabit()
+			} label: {
+				Label("New Habit", systemImage: "plus")
+					.frame(idealHeight: 44)
+			}
+		}
+	}
+
 	var body: some View {
 		NavigationSplitView {
-			List {
-				ForEach(groupedHabits, id: \.label) { groupLabel, habits in
-					Section {
-						ForEach(habits) { habit in
-							HabitListItem(habit: habit)
-//								.listRowSeparator(.hidden)
-								.frame(minHeight: 56)
+			Group {
+				if asGrid {
+					ScrollView {
+						LazyVGrid(columns: [.init(.adaptive(minimum: 96, maximum: 128))]) {
+							ForEach(groupedHabits, id: \.label) { groupLabel, habits in
+								Section {
+									ForEach(habits) { habit in
+										HabitListItem(habit: habit, asGrid: true)
+											.padding(.horizontal, 4)
+											.padding(.bottom, 16)
+									}
+								} header: {
+									Text(groupLabel)
+//										.frame(maxWidth: .infinity, alignment: .leading)
+										.foregroundStyle(.secondary)
+										.font(.headline.smallCaps())
+								}
+							}
 						}
-					} header: {
-						Text(groupLabel)
-							.font(.title3)
-							.textCase(nil)
+							.padding(.bottom)
+						addSection
+							.buttonStyle(.bordered)
+					}
+				} else {
+					List {
+						ForEach(groupedHabits, id: \.label) { groupLabel, habits in
+							Section {
+								ForEach(habits) { habit in
+									HabitListItem(habit: habit, asGrid: false)
+//										.listRowSeparator(.hidden)
+										.frame(minHeight: 56)
+								}
+							} header: {
+								Text(groupLabel)
+									.font(.headline.smallCaps())
+							}
+						}
+						addSection
 					}
 				}
 			}
@@ -79,12 +122,18 @@ struct ContentView: View {
 				.navigationSplitViewColumnWidth(min: 240, ideal: 300)
 #endif
 				.toolbar {
-					ToolbarItem {
+					ToolbarItem(placement: .secondaryAction) {
 						Button {
-							newHabitPrompt = true
-							newHabitName = ""
+							asGrid.toggle()
 						} label: {
-							Label("Add Item", systemImage: "plus")
+							Label(asGrid ? "View as list" : "View as grid", systemImage: asGrid ? "checklist.unchecked" : "circle.grid.2x2")
+						}
+					}
+					ToolbarItem(placement: .primaryAction) {
+						Button {
+							onAddHabit()
+						} label: {
+							Label("Add Habit", systemImage: "plus")
 						}
 					}
 				}

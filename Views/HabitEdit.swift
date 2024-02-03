@@ -163,11 +163,11 @@ struct HabitEdit: View {
 			}
 			.onChange(of: focusedField) { oldValue, focusedField in
 				if focusedField != nil {
-					Task { @MainActor in
 #if os(iOS)
+					Task { @MainActor in
 						UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
-#endif
 					}
+#endif
 				}
 			}
 			.toolbar {

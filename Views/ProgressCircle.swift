@@ -6,7 +6,7 @@ struct ProgressCircle: View {
 	let size: Double
 
 	var body: some View {
-		let lineWidth = size / 6
+		let lineWidth: Double = 6 // size / 6
 		let progress = Double(count) / Double(habit.goalCount)
 		ZStack {
 			Circle()
