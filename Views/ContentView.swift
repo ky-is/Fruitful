@@ -17,7 +17,6 @@ struct ContentView: View {
 		for habit in habits {
 			if now > habit.intervalEndAt {
 				habit.intervalStartAt = habit.interval.startDate
-				habit.intervalEndAt = habit.interval.getEndDate(from: habit.intervalStartAt)
 			}
 		}
 	}

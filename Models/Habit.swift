@@ -9,7 +9,6 @@ final class Habit {
 
 	var interval = HabitInterval.week
 	var intervalStartAt = Date.now
-	var intervalEndAt = Date.now
 
 	var goalLabel: String = ""
 	var goalCount: Int = 1
@@ -37,7 +36,6 @@ final class Habit {
 		self.interval = interval
 		let startDate = interval.startDate
 		self.intervalStartAt = startDate
-		self.intervalEndAt = interval.getEndDate(from: startDate)
 
 		self.goalLabel = goalLabel
 		self.goalCount = goalCount
@@ -45,6 +43,10 @@ final class Habit {
 		self.priority = priority
 
 		self.completedAt = completedAt
+	}
+
+	var intervalEndAt: Date {
+		interval.getEndDate(from: intervalStartAt)
 	}
 }
 
