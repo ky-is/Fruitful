@@ -31,11 +31,12 @@ struct AppModel {
 		do {
 			let context = container.mainContext
 			let habits = try context.fetch(FetchDescriptor<Habit>())
-			let habitEntries = try context.fetch(FetchDescriptor<HabitEntry>())
+//			let habitEntries = try context.fetch(FetchDescriptor<HabitEntry>())
 			if habits.isEmpty {
 				seedHabits.forEach(context.insert)
 				print("RELOAD seed data")
 			} else {
+//				habits.forEach { if $0.title.isEmpty { context.delete($0) } } //SAMPLE delete empty Habits
 //				print(habits.map { "let \($0.title) = Habit(title: \"\($0.title)\", icon: \"\($0.icon)\", goalCount: \($0.goalCount), hexColor: \($0.hexColor))" }.joined(separator: "\n"))
 //				print("let seedHabits: [Habit] = [\(habits.map { $0.title }.joined(separator: ", "))]")
 //				print(habitEntries.map { "HabitEntry(habit: \($0.habit?.title ?? ""), timestamp: Date(timeIntervalSince1970: \(Int($0.timestamp.timeIntervalSince1970))))" }.joined(separator: ",\n\t")) //SAMPLE
