@@ -1,11 +1,11 @@
 import SwiftUI
 
 extension Color {
-	#if os(macOS)
+#if os(macOS)
 	static let background = Self(NSColor.windowBackgroundColor)
-	#else
+#else
 	static let background = Self(UIColor.systemBackground)
-	#endif
+#endif
 }
 
 #if !os(macOS)

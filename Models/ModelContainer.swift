@@ -36,9 +36,9 @@ struct AppModel {
 				seedHabits.forEach(context.insert)
 				print("RELOAD seed data")
 			} else {
-				print(habits.map { "let \($0.title) = Habit(title: \"\($0.title)\", icon: \"\($0.icon)\", goalCount: \($0.goalCount), hexColor: \($0.hexColor))" }.joined(separator: "\n"))
-				print("let seedHabits: [Habit] = [\(habits.map { $0.title }.joined(separator: ", "))]")
-				print(habitEntries.map { "HabitEntry(habit: \($0.habit?.title ?? ""), timestamp: Date(timeIntervalSince1970: \(Int($0.timestamp.timeIntervalSince1970))))" }.joined(separator: ",\n\t")) //SAMPLE
+//				print(habits.map { "let \($0.title) = Habit(title: \"\($0.title)\", icon: \"\($0.icon)\", goalCount: \($0.goalCount), hexColor: \($0.hexColor))" }.joined(separator: "\n"))
+//				print("let seedHabits: [Habit] = [\(habits.map { $0.title }.joined(separator: ", "))]")
+//				print(habitEntries.map { "HabitEntry(habit: \($0.habit?.title ?? ""), timestamp: Date(timeIntervalSince1970: \(Int($0.timestamp.timeIntervalSince1970))))" }.joined(separator: ",\n\t")) //SAMPLE
 			}
 		} catch {
 			print("Unable to load existing data")
