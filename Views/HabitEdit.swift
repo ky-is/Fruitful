@@ -129,7 +129,7 @@ struct HabitEdit: View {
 					ColorPicker("Habit Color", selection: $habit.cgColor, supportsOpacity: false)
 						.labelsHidden()
 				}
-					.font(.title2)
+					.font(.roundedTitle2)
 					.textCase(nil)
 					.padding(.bottom)
 					.padding(.leading, -16)

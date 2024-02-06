@@ -81,7 +81,7 @@ struct ContentView: View {
 									Text(groupLabel)
 //										.frame(maxWidth: .infinity, alignment: .leading)
 										.foregroundStyle(.secondary)
-										.font(.headline.smallCaps())
+										.font(.roundedHeadline.smallCaps())
 								}
 							}
 						}
@@ -100,7 +100,7 @@ struct ContentView: View {
 								}
 							} header: {
 								Text(groupLabel)
-									.font(.headline.smallCaps())
+									.font(.roundedHeadline.smallCaps())
 							}
 						}
 						addHabitSection

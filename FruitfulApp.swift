@@ -10,7 +10,7 @@ struct FruitfulApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
-				.font(.body)
+				.font(.roundedBody)
 		}
 			.modelContainer(AppModel.shared.container)
 	}

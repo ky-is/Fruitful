@@ -91,7 +91,7 @@ struct HabitListItem: View {
 				Text(habit.interval.description)
 			}
 		}
-			.font(.callout)
+			.font(.roundedCallout)
 			.foregroundColor(.secondary)
 	}
 
