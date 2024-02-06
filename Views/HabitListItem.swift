@@ -35,12 +35,13 @@ struct HabitListItem: View {
 					listItem
 				}
 			}
-				.contextMenu {
-					contextActions
-				}
+				.contentShape(Rectangle())
 		}
 			.buttonStyle(.plain)
 			.tint(habit.color)
+			.contextMenu {
+				contextActions
+			}
 			.swipeActions(edge: .trailing) {
 				if !asGrid {
 					contextActions
