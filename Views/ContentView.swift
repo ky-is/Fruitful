@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-	@Environment(\.modelContext) private var modelContext
 	@Environment(\.scenePhase) private var scenePhase
 
 	@Query(filter: #Predicate<Habit>{ !$0.archived }) private var habits: [Habit]
@@ -50,65 +49,13 @@ struct ContentView: View {
 		}
 	}
 
-	private var addHabitButton: some View {
-		Button {
-			let habit = Habit(title: "")
-			selectedHabit = habit
-			modelContext.insert(habit)
-		} label: {
-			Label("New Habit", systemImage: "plus")
-				.frame(idealHeight: 44)
-		}
-	}
-	private var addHabitSection: some View {
-		Section {
-#if !os(macOS)
-			addHabitButton
-#endif
-		}
-	}
-
 	var body: some View {
 		NavigationStack {
 			Group {
 				if asGrid {
-					ScrollView {
-						LazyVGrid(columns: [.init(.adaptive(minimum: 96, maximum: 128))]) {
-							ForEach(groupedHabits, id: \.label) { groupLabel, habits in
-								Section {
-									ForEach(habits) { habit in
-										HabitListItem(habit: habit, asGrid: true, selectedHabit: $selectedHabit)
-											.padding(.horizontal, 4)
-											.padding(.bottom, 16)
-									}
-								} header: {
-									Text(groupLabel)
-//										.frame(maxWidth: .infinity, alignment: .leading)
-										.foregroundStyle(.secondary)
-										.font(.roundedHeadline.smallCaps())
-								}
-							}
-						}
-							.padding(.bottom)
-						addHabitSection
-							.buttonStyle(.bordered)
-					}
+					HabitGridView(groupedHabits: groupedHabits, selectedHabit: $selectedHabit)
 				} else {
-					List {
-						ForEach(groupedHabits, id: \.label) { groupLabel, habits in
-							Section {
-								ForEach(habits) { habit in
-									HabitListItem(habit: habit, asGrid: false, selectedHabit: $selectedHabit)
-//										.listRowSeparator(.hidden)
-										.frame(minHeight: 56)
-								}
-							} header: {
-								Text(groupLabel)
-									.font(.roundedHeadline.smallCaps())
-							}
-						}
-						addHabitSection
-					}
+					HabitListView(groupedHabits: groupedHabits, selectedHabit: $selectedHabit)
 				}
 			}
 				.navigationTitle("My Habits")
@@ -129,7 +76,7 @@ struct ContentView: View {
 						}
 					}
 					ToolbarItem(placement: .primaryAction) {
-						addHabitButton
+						AddHabitButton(selectedHabit: $selectedHabit)
 					}
 				}
 				.sheet(item: $selectedHabit) { habit in

@@ -12,6 +12,12 @@ struct ProgressCircle: View {
 		let inset = progress < 1 ? 0.025 : 0.09
 		ZStack {
 			if progress < 1 {
+//				ForEach(0..<count, id: \.self) { index in
+//					Circle()
+//						.trim(from: Double(index) * countFraction + inset * 0, to: Double(index + 1) * countFraction - inset * 0)
+//						.stroke(habit.color.tertiary, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+//				}
+//					.rotationEffect(.degrees(-90))
 				Circle()
 					.stroke(habit.color.tertiary, lineWidth: lineWidth)
 			} else {
