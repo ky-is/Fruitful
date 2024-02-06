@@ -76,8 +76,17 @@ struct HabitListItem: View {
 			Text(habit.title)
 		}
 	}
+	private var habitStreak: some View {
+		Group {
+			if habit.completedStreak > 0 {
+				Text("\(habit.completedStreak) streak")
+					.font(.roundedCallout)
+					.foregroundColor(.secondary)
+			}
+		}
+	}
 	private var habitDetails: some View {
-		HStack {
+		HStack(spacing: 0) {
 			if habit.goalCount > 1 {
 				Text(activeEntries.count, format: .number)
 					.fontWeight(.medium)
@@ -90,6 +99,10 @@ struct HabitListItem: View {
 				Text(" " + habit.interval.description)
 			} else {
 				Text(habit.interval.description)
+			}
+			if !asGrid && habit.completedStreak > 0 {
+				Text("・")
+				habitStreak
 			}
 		}
 			.font(.roundedCallout)
@@ -125,6 +138,7 @@ struct HabitListItem: View {
 				}
 			habitTitle
 			habitDetails
+			habitStreak
 		}
 	}
 }

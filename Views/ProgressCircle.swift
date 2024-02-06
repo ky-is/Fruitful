@@ -17,9 +17,9 @@ struct ProgressCircle: View {
 			} else {
 				Ellipse()
 					.fill(habit.color)
-					.rotationEffect(.degrees(36), anchor: .bottomLeading)
+					.rotationEffect(.degrees(38), anchor: .bottomLeading)
 					.frame(width: leafSize * 0.4, height: leafSize)
-					.position(x: size * 0.475 - lineWidth * 0.1, y: -lineWidth * 1.4)
+					.position(x: size * 0.475 - lineWidth * 0.15, y: -size * 0.05 - lineWidth * 1)
 			}
 			Circle()
 				.trim(from: inset, to: progress * (1 - inset))
