@@ -15,7 +15,11 @@ struct ContentView: View {
 		print(#function)
 		let now = Date()
 		for habit in habits {
-			if now > habit.intervalEndAt {
+			let endedAt = habit.intervalEndAt
+			if now > endedAt {
+				if habit.completedUntil < endedAt {
+					habit.completedStreak = 0
+				}
 				habit.intervalStartAt = habit.interval.startDate
 			}
 		}
